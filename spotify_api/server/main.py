@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # from typing import Annotated
 
 #router imports
+from utils.spotipy import sp
 from album import router as album_router
 
 # cors allowed origins
@@ -21,11 +22,18 @@ app.add_middleware(
 
 app.include_router(album_router)
 
-@app.get("/{artist}")
-async def root(artist: str):
-    # return info about album
-    search = sp.search(artist, type='artist')
-    return search
+@app.get("/login")
+def login():
+    return sp.user()
+
+@app.get("/top")
+def get_playlists():
+    return sp.current_user_top_tracks()
+
+@app.get("/recent")
+def get_recently_played():
+    return sp.current_user_recently_played()
+
 
 from utils.utility import get_hashed_password, verify_password
 
